@@ -1,0 +1,10 @@
+# Core (always required)
+numpy>=1.26,<2        # conservative pin: insightface 0.7.3 was built in the numpy-1.x era (verify before relaxing)
+opencv-python>=4.8    # full build, needed for the live window (cv2.imshow). Do NOT install together with opencv-python-headless.
+# Recognition backend
+insightface==0.7.3
+onnxruntime>=1.17     # CPU. For NVIDIA GPU use onnxruntime-gpu instead (never both).
+# Optional
+cryptography>=42      # at-rest encryption of embeddings
+# Dev
+pytest>=8

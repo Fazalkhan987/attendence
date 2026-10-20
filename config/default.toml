@@ -1,0 +1,84 @@
+# Every numeric threshold below is a PROVISIONAL STARTING POINT, not a validated value.
+# Calibrate with `face-engine evaluate` on data that represents your real cameras and people.
+
+[paths]
+data_dir = "data"          # holds the SQLite DB, admin file and logs. Keep it private (0700 on POSIX).
+
+[logging]
+level = "INFO"
+
+[detector]
+backend = "insightface_scrfd"
+model_path = "~/.insightface/models/buffalo_l/det_10g.onnx"
+det_size = [640, 640]
+min_confidence = 0.5
+providers = ["CPUExecutionProvider"]
+
+[embedder]
+backend = "insightface_arcface"
+model_path = "~/.insightface/models/buffalo_l/w600k_r50.onnx"
+model_id = "insightface-buffalo_l-w600k_r50"   # stored in the DB; embeddings from different models are never mixed
+providers = ["CPUExecutionProvider"]
+
+[quality_enroll]            # strict: used when registering people
+min_face_px = 80
+min_det_score = 0.70
+min_blur = 50.0             # variance of Laplacian on the face crop resized to 112x112
+min_brightness = 50.0
+max_brightness = 220.0
+min_contrast = 25.0
+max_yaw_proxy = 0.45        # |nose offset| / inter-eye distance. Heuristic, NOT degrees
+max_roll_deg = 25.0
+min_pitch_ratio = 0.30      # (eye->nose) / (eye->mouth) vertical ratio; ~0.5 for a frontal face
+max_pitch_ratio = 0.70
+max_border_clip = 0.10      # max fraction of the box allowed outside the frame
+
+[quality_live]              # looser: used for live recognition
+min_face_px = 50
+min_det_score = 0.50
+min_blur = 25.0
+min_brightness = 40.0
+max_brightness = 230.0
+min_contrast = 15.0
+max_yaw_proxy = 0.60
+max_roll_deg = 35.0
+min_pitch_ratio = 0.25
+max_pitch_ratio = 0.75
+max_border_clip = 0.20
+
+[enrollment]
+min_samples = 5
+max_samples_per_person = 20
+duplicate_identity_threshold = 0.60   # new person vs existing people: flag as possible duplicate above this
+redundancy_threshold = 0.98           # skip a sample nearly identical to an already accepted one
+consistency_threshold = 0.30          # reject a sample whose similarity to the batch centroid is below this (wrong person / contaminated folder)
+reject_multiple_faces = true
+max_image_side = 1920
+max_file_mb = 20
+
+[recognition]
+threshold = 0.45            # cosine similarity. PROVISIONAL: calibrate with evaluate
+uncertain_band = 0.05       # scores in [threshold-band, threshold) are UNCERTAIN, not UNKNOWN
+margin = 0.05               # best minus runner-up (other person) must exceed this
+score_mode = "max"          # max | topk_mean | centroid
+topk = 3
+require_liveness = false    # fails closed at start-up if true and no real liveness checker is installed
+
+[live]
+camera_index = 0
+recognition_interval = 5    # re-run embedding for each track every N frames
+window = 7                  # smoothing window (results per track)
+min_votes = 4               # votes for one identity needed inside the window
+max_track_missed = 10
+detect_max_side = 640       # frames are downscaled for detection if larger
+max_read_failures = 30
+
+[security]
+admin_file = "admin.json"
+session_ttl_s = 900
+max_failed_attempts = 5
+lockout_s = 300
+pbkdf2_iterations = 600000
+min_passcode_length = 10
+encrypt_embeddings = false  # needs `pip install cryptography` and the key env var below
+key_env = "FACE_ENGINE_DB_KEY"

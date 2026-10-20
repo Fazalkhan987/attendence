@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "face-engine"
+version = "0.1.0"
+description = "Modular face detection and recognition engine (SCRFD + ArcFace) for a future smart-attendance system"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.26", "opencv-python-headless>=4.8"]
+
+[project.optional-dependencies]
+insightface = ["insightface==0.7.3", "onnxruntime>=1.17"]
+gui = ["opencv-python>=4.8"]          # use INSTEAD of headless when you need the live window
+encryption = ["cryptography>=42"]
+dev = ["pytest>=8"]
+
+[project.scripts]
+face-engine = "face_engine.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "tests"]
+testpaths = ["tests"]

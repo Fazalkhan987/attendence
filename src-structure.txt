@@ -1,0 +1,33 @@
+src
+└── face_engine
+    ├── alignment.py
+    ├── backends
+    │   ├── __init__.py
+    │   └── insightface_backend.py
+    ├── cli.py
+    ├── config.py
+    ├── engine.py
+    ├── evaluation
+    │   ├── dataset.py
+    │   ├── evaluate.py
+    │   ├── __init__.py
+    │   └── metrics.py
+    ├── exceptions.py
+    ├── frames.py
+    ├── gallery.py
+    ├── __init__.py
+    ├── interfaces.py
+    ├── logging_setup.py
+    ├── quality.py
+    ├── recognition.py
+    ├── registration.py
+    ├── security.py
+    ├── storage
+    │   ├── crypto.py
+    │   ├── db.py
+    │   └── __init__.py
+    ├── tracking.py
+    ├── types.py
+    └── webcam.py
+ 
+5 directories, 26 files

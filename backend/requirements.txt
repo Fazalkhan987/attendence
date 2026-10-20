@@ -1,0 +1,7 @@
+# Install the face engine first (from the repo root):  pip install -e "./face_engine[insightface]"
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9      # required by FastAPI for file uploads / forms
+openpyxl>=3.1                # XLSX export
+pytest>=8
+httpx>=0.27                  # FastAPI TestClient
